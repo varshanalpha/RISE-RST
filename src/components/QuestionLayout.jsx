@@ -18,7 +18,7 @@ export default function QuestionLayout({
   isWelcome = false
 }) {
   return (
-    <div className="min-h-screen relative flex flex-col items-center bg-[#F9FAFB] font-sans overflow-hidden pb-12">
+    <div className={`min-h-screen relative flex flex-col items-center ${isWelcome ? 'bg-transparent' : 'bg-[#F9FAFB]'} font-sans overflow-hidden pb-12`}>
       
       {/* Subtle Background Gradients - safe for all steps */}
       <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] bg-[#EAF7F4]/20 rounded-full filter blur-[100px] pointer-events-none"></div>
