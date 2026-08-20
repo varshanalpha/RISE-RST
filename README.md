@@ -1,8 +1,9 @@
 # Resume Parser Agent
 
-> **Phase 6: Deterministic Requirement Matching**
+> **Phase 7: Deterministic Resume-to-Job Scoring Engine**
 
 A CLI-based system that processes resume files (PDF/DOCX) alongside job descriptions to extract structured candidate profiles with traceable text evidence and score job fit.
+
 
 
 

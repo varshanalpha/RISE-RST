@@ -7,6 +7,7 @@ from app.extractor import ExtractionError, extract_text
 from app.field_parser import parse_fields
 from app.jd_parser import JDParseError, parse_jd, read_jd_file
 from app.matcher import MatcherError, match_requirements
+from app.scorer import ScorerError, calculate_scores
 from app.segmenter import segment_text
 
 
@@ -64,7 +65,7 @@ def main() -> None:
                 print()
             print("===== JD PARSING COMPLETE =====")
 
-            # 3. Requirement Matching
+            # 3. Requirement Matching & Precise Evidence Selection
             match_result = match_requirements(parsed_fields, jd_result)
             matches = match_result.get("matches", [])
 
@@ -80,6 +81,32 @@ def main() -> None:
                 print()
             print("===== MATCHING COMPLETE =====")
 
+            # 4. Deterministic Resume-to-Job Scoring Engine
+            scores = calculate_scores(match_result)
+            cat_scores = scores.get("category_scores", {})
+            req_scores = scores.get("requirement_scores", [])
+
+            print("\n===== RESUME MATCH SCORE =====\n")
+            print(f"Overall Score: {scores['overall_score']:.2f}%")
+            print(f"Earned Score: {scores['earned_score']}")
+            print(f"Maximum Score: {scores['maximum_score']}")
+
+            print("\n===== CATEGORY SCORES =====\n")
+            for cat_name in ["EXPERIENCE", "RESPONSIBILITY", "SKILL", "EDUCATION"]:
+                cs = cat_scores.get(cat_name, {"percentage": 0.0})
+                print(f"{cat_name}: {cs['percentage']:.2f}%")
+
+            print("\n===== REQUIREMENT SCORES =====\n")
+            for rs in req_scores:
+                print(f"[{rs['requirement_id']}]")
+                print(f"Category: {rs['category']}")
+                print(f"Priority: {rs['priority']}")
+                print(f"Status: {rs['status']}")
+                print(f"Weight: {rs['weight']}")
+                print(f"Score: {rs['score']}")
+                print()
+            print("===== SCORING COMPLETE =====")
+
     except ExtractionError as e:
         print(f"Extraction Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -89,6 +116,9 @@ def main() -> None:
     except MatcherError as e:
         print(f"Matcher Error: {e}", file=sys.stderr)
         sys.exit(1)
+    except ScorerError as e:
+        print(f"Scorer Error: {e}", file=sys.stderr)
+        sys.exit(1)
     except Exception as e:
         print(f"Unexpected Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -96,6 +126,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 

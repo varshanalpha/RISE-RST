@@ -1,7 +1,7 @@
 """Data models and schemas for structured candidate profiles and evidence tracking."""
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, TypedDict
+from typing import Any, Dict, Optional, TypedDict,List
 
 
 class FieldResultDict(TypedDict):
@@ -183,6 +183,98 @@ class MatchProfile:
         return {
             "matches": [m.to_dict() for m in self.matches]
         }
+
+
+class CategoryScoreDict(TypedDict):
+    """Dictionary representation of a category-level match score."""
+
+    earned_score: float
+    maximum_score: float
+    percentage: float
+
+
+@dataclass
+class CategoryScore:
+    """Represents category-level match score metrics."""
+
+    earned_score: float
+    maximum_score: float
+    percentage: float
+
+    def to_dict(self) -> CategoryScoreDict:
+        return {
+            "earned_score": self.earned_score,
+            "maximum_score": self.maximum_score,
+            "percentage": self.percentage,
+        }
+
+
+class RequirementScoreDict(TypedDict):
+    """Dictionary representation of an individual requirement score."""
+
+    requirement_id: str
+    category: str
+    priority: str
+    status: str
+    weight: float
+    score: float
+
+
+@dataclass
+class RequirementScore:
+    """Represents calculated score for a single requirement."""
+
+    requirement_id: str
+    category: str
+    priority: str
+    status: str
+    weight: float
+    score: float
+
+    def to_dict(self) -> RequirementScoreDict:
+        return {
+            "requirement_id": self.requirement_id,
+            "category": self.category,
+            "priority": self.priority,
+            "status": self.status,
+            "weight": self.weight,
+            "score": self.score,
+        }
+
+
+class ScoreProfileDict(TypedDict):
+    """Dictionary representation of the overall deterministic match score profile."""
+
+    overall_score: float
+    earned_score: float
+    maximum_score: float
+    category_scores: Dict[str, CategoryScoreDict]
+    requirement_scores: List[RequirementScoreDict]
+
+
+@dataclass
+class ScoreProfile:
+    """Complete deterministic score profile."""
+
+    overall_score: float
+    earned_score: float
+    maximum_score: float
+    category_scores: Dict[str, CategoryScore]
+    requirement_scores: List[RequirementScore]
+
+    def to_dict(self) -> ScoreProfileDict:
+        return {
+            "overall_score": self.overall_score,
+            "earned_score": self.earned_score,
+            "maximum_score": self.maximum_score,
+            "category_scores": {
+                k: v.to_dict() for k, v in self.category_scores.items()
+            },
+            "requirement_scores": [
+                r.to_dict() for r in self.requirement_scores
+            ],
+        }
+
 
 
 
