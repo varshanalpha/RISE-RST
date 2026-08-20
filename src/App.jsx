@@ -5,9 +5,92 @@ import ReviewCard from './components/ReviewCard';
 import LoadingScreen from './components/LoadingScreen';
 import ResultsPreview from './components/ResultsPreview';
 
-// Premium SVG Illustration of floating resume papers
+// Ambient Background Glow, Particles, and Floating Papers (Welcome Page Only)
+const WelcomeBackground = () => {
+  // Config for 7 background papers with varied sizes, positions, delays, and animation classes
+  const papersConfig = [
+    { id: 1, top: '12%', left: '6%', w: '44px', h: '58px', delay: '0s', anim: 'welcome-paper-1' },
+    { id: 2, top: '22%', right: '8%', w: '52px', h: '68px', delay: '3s', anim: 'welcome-paper-2' },
+    { id: 3, top: '65%', left: '4%', w: '40px', h: '52px', delay: '6s', anim: 'welcome-paper-3' },
+    { id: 4, top: '55%', right: '5%', w: '48px', h: '62px', delay: '1s', anim: 'welcome-paper-4' },
+    { id: 5, top: '35%', left: '15%', w: '38px', h: '50px', delay: '8s', anim: 'welcome-paper-2' },
+    { id: 6, top: '75%', right: '14%', w: '46px', h: '60px', delay: '4s', anim: 'welcome-paper-1' },
+    { id: 7, top: '82%', left: '9%', w: '42px', h: '55px', delay: '10s', anim: 'welcome-paper-3' },
+  ];
+
+  // Config for 12 edge particles with varied positions, sizes, and pulse durations
+  const particlesConfig = [
+    { id: 1, top: '10%', left: '15%', size: '6px', duration: '5s' },
+    { id: 2, top: '15%', right: '20%', size: '8px', duration: '7s' },
+    { id: 3, top: '45%', left: '8%', size: '5px', duration: '6s' },
+    { id: 4, top: '50%', right: '10%', size: '7px', duration: '8s' },
+    { id: 5, top: '80%', left: '18%', size: '8px', duration: '9s' },
+    { id: 6, top: '85%', right: '22%', size: '6px', duration: '6s' },
+    { id: 7, top: '25%', left: '5%', size: '6px', duration: '7.5s' },
+    { id: 8, top: '30%', right: '3%', size: '5px', duration: '5.5s' },
+    { id: 9, top: '70%', left: '3%', size: '7px', duration: '8.5s' },
+    { id: 10, top: '75%', right: '6%', size: '8px', duration: '6.5s' },
+    { id: 11, top: '5%', left: '45%', size: '5px', duration: '7s' },
+    { id: 12, top: '92%', right: '45%', size: '6px', duration: '8s' },
+  ];
+
+  return (
+    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+      {/* Radial Soft Teal/Mint Glow behind card */}
+      <div className="welcome-bg-glow"></div>
+
+      {/* Floating Papers */}
+      {papersConfig.map((p) => (
+        <div
+          key={`paper-${p.id}`}
+          className={`welcome-paper ${p.anim}`}
+          style={{
+            top: p.top,
+            left: p.left,
+            right: p.right,
+            width: p.w,
+            height: p.h,
+            animationDelay: p.delay,
+          }}
+        >
+          {/* Micro-layout design inside simplified resume paper */}
+          <div className="w-full h-full p-1.5 flex flex-col gap-1 relative overflow-hidden">
+            {/* Header row with tiny teal accent */}
+            <div className="flex justify-between items-center">
+              <div className="w-4 h-1.5 bg-[#087F73]/20 rounded-xs"></div>
+              <div className="w-1.5 h-1.5 bg-[#087F73]/50 rounded-full"></div>
+            </div>
+            {/* Body lines */}
+            <div className="w-full h-0.5 bg-gray-100 rounded-full"></div>
+            <div className="w-11/12 h-0.5 bg-gray-100 rounded-full"></div>
+            <div className="w-5/6 h-0.5 bg-gray-100 rounded-full"></div>
+            <div className="w-4/5 h-0.5 bg-gray-100 rounded-full"></div>
+          </div>
+        </div>
+      ))}
+
+      {/* Edge Particles */}
+      {particlesConfig.map((pt) => (
+        <div
+          key={`particle-${pt.id}`}
+          className="welcome-particle opacity-20"
+          style={{
+            top: pt.top,
+            left: pt.left,
+            right: pt.right,
+            width: pt.size,
+            height: pt.size,
+            animationDuration: pt.duration,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// Premium SVG Illustration of floating resume papers with active micro animations
 const ResumeIllustration = () => (
-  <div className="relative w-48 h-40 mx-auto mb-6 flex items-center justify-center">
+  <div className="relative w-48 h-40 mx-auto mb-6 flex items-center justify-center welcome-ill-float">
     {/* Floating Job Description Page */}
     <div className="absolute top-2 left-8 w-24 h-32 bg-white border border-[#DDE8E5] rounded-xl shadow-xs -rotate-12 transform origin-bottom-left pointer-events-none select-none">
       <div className="p-3 space-y-2">
@@ -26,8 +109,8 @@ const ResumeIllustration = () => (
         <div className="w-full h-1 bg-gray-100 rounded"></div>
         <div className="w-4/5 h-1 bg-[#087F73]/20 rounded"></div>
         
-        {/* Verification Checkmark Badge */}
-        <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-[#087F73] rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+        {/* Verification Checkmark Badge with continuous pulse animation */}
+        <div className="welcome-checkmark-pulse absolute -bottom-2 -right-2 w-7 h-7 bg-[#087F73] rounded-full flex items-center justify-center shadow-lg border-2 border-white">
           <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" />
           </svg>
@@ -35,13 +118,19 @@ const ResumeIllustration = () => (
       </div>
     </div>
 
-    {/* Sparkle Icons */}
-    <div className="absolute top-0 right-4 w-5 h-5 text-teal-400 opacity-60 animate-pulse select-none pointer-events-none">
+    {/* Sparkle Icons with slow fade, rotate and pulse animations */}
+    <div className="welcome-sparkle-loop absolute top-0 right-4 w-5 h-5 text-teal-400 opacity-60 select-none pointer-events-none">
       <svg fill="currentColor" viewBox="0 0 24 24" className="w-full h-full">
         <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
       </svg>
     </div>
-    <div className="absolute bottom-2 left-4 w-3.5 h-3.5 text-amber-400 opacity-80 select-none pointer-events-none">
+    {/* Additional tiny sparkle */}
+    <div className="welcome-sparkle-loop absolute bottom-4 left-6 w-3 h-3 text-teal-300 opacity-50 select-none pointer-events-none" style={{ animationDelay: '1.5s' }}>
+      <svg fill="currentColor" viewBox="0 0 24 24" className="w-full h-full">
+        <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
+      </svg>
+    </div>
+    <div className="welcome-sparkle-loop absolute bottom-2 left-4 w-3.5 h-3.5 text-amber-400 opacity-80 select-none pointer-events-none" style={{ animationDelay: '0.8s' }}>
       <svg fill="currentColor" viewBox="0 0 24 24" className="w-full h-full">
         <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
       </svg>
@@ -184,7 +273,10 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FBFA]">
+    <div className="min-h-screen bg-[#F8FBFA] relative">
+      {/* Render Welcome Background animations ONLY on step 0 */}
+      {currentStep === 0 && <WelcomeBackground />}
+
       {/* STEP 0: WELCOME */}
       {currentStep === 0 && (
         <QuestionLayout
@@ -196,12 +288,15 @@ export default function App() {
           isWelcome={true}
         >
           <div className="flex flex-col items-center justify-center text-center">
-            <ResumeIllustration />
-            <h1 className="text-3xl md:text-[36px] font-bold text-[#10202B] leading-tight tracking-tight mb-4">
+            {/* Illustration with entry stagger */}
+            <div className="welcome-ill-enter">
+              <ResumeIllustration />
+            </div>
+            <h1 className="text-3xl md:text-[36px] font-bold text-[#10202B] leading-tight tracking-tight mb-4 welcome-heading-enter">
               Let's find your best match.
             </h1>
-            <div className="w-12 h-[3px] bg-[#087F73] mx-auto mb-5 rounded-full"></div>
-            <p className="text-[#6B7780] text-[16px] md:text-[17px] leading-relaxed max-w-md mx-auto">
+            <div className="w-12 h-[3px] bg-[#087F73] mx-auto mb-5 rounded-full welcome-subtitle-enter"></div>
+            <p className="text-[#6B7780] text-[16px] md:text-[17px] leading-relaxed max-w-md mx-auto welcome-subtitle-enter">
               Tell us what role you're looking for, upload your resume, and add the job description you want to compare against.
             </p>
           </div>

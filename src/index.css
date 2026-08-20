@@ -4,10 +4,11 @@
 
 @layer base {
   body {
-    @apply bg-[#F8FBFA] text-[#10202B] font-sans antialiased;
+    @apply bg-[#F9FAFB] text-gray-900 font-sans antialiased;
   }
 }
 
+/* Base animations */
 .animate-fade-in {
   animation: fadeIn 300ms ease-out forwards;
 }
@@ -22,39 +23,239 @@
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(15px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Falling paper animation */
-@keyframes fall {
-  0% {
-    transform: translateY(-100px) rotate(0deg);
-    opacity: 0;
-  }
-  15% {
-    opacity: 0.35;
-  }
-  90% {
-    opacity: 0.35;
-  }
-  100% {
-    transform: translateY(105vh) rotate(360deg);
-    opacity: 0;
+/* ========================================================
+   LANDING PAGE EXCLUSIVE STYLES & ANIMATIONS
+   ======================================================== */
+
+/* Entrance Staggered Animations */
+.welcome-card-enter {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: welcomeCardFadeUp 800ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.welcome-ill-enter {
+  opacity: 0;
+  animation: fadeIn 600ms ease-out 150ms forwards;
+}
+
+.welcome-heading-enter {
+  opacity: 0;
+  animation: fadeIn 600ms ease-out 300ms forwards;
+}
+
+.welcome-subtitle-enter {
+  opacity: 0;
+  animation: fadeIn 600ms ease-out 400ms forwards;
+}
+
+.welcome-btn-enter {
+  opacity: 0;
+  animation: fadeIn 600ms ease-out 550ms forwards;
+}
+
+@keyframes welcomeCardFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.animate-fall {
+/* Ambient Breathing Background Glow */
+.welcome-bg-glow {
   position: absolute;
-  top: -100px;
-  animation: fall 12s linear infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(8,127,115,0.08) 0%, rgba(234,247,244,0.03) 70%, transparent 100%);
+  filter: blur(60px);
   pointer-events: none;
-  user-select: none;
+  z-index: 0;
+  animation: bgGlowBreathe 10s ease-in-out infinite alternate;
+}
+
+@keyframes bgGlowBreathe {
+  0% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-48%, -52%) scale(1.1);
+  }
+}
+
+/* Floating Resume Papers Background Animation */
+@keyframes paperFloat1 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.3; }
+  90% { opacity: 0.3; }
+  100% { transform: translate(-20px, 120px) rotate(15deg); opacity: 0; }
+}
+@keyframes paperFloat2 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 0.25; }
+  85% { opacity: 0.25; }
+  100% { transform: translate(30px, 140px) rotate(-20deg); opacity: 0; }
+}
+@keyframes paperFloat3 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.35; }
+  80% { opacity: 0.35; }
+  100% { transform: translate(-10px, 90px) rotate(10deg); opacity: 0; }
+}
+@keyframes paperFloat4 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.2; }
+  90% { opacity: 0.2; }
+  100% { transform: translate(15px, 110px) rotate(-15deg); opacity: 0; }
+}
+
+.welcome-paper {
+  position: absolute;
   background: white;
   border: 1px solid #DDE8E5;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(8,127,115,0.06);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(8,127,115,0.03);
+  pointer-events: none;
   z-index: 0;
+}
+
+.welcome-paper-1 { animation: paperFloat1 14s linear infinite; }
+.welcome-paper-2 { animation: paperFloat2 16s linear infinite; }
+.welcome-paper-3 { animation: paperFloat3 12s linear infinite; }
+.welcome-paper-4 { animation: paperFloat4 18s linear infinite; }
+
+/* Subtle Floating Particles */
+@keyframes particlePulse {
+  0%, 100% { opacity: 0.1; transform: scale(0.8) translateY(0); }
+  50% { opacity: 0.35; transform: scale(1.2) translateY(-10px); }
+}
+
+.welcome-particle {
+  position: absolute;
+  border-radius: 50%;
+  background-color: #087F73;
+  pointer-events: none;
+  z-index: 0;
+  animation: particlePulse 6s ease-in-out infinite;
+}
+
+/* Illustration Floating Animation */
+@keyframes illFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(0.8deg);
+  }
+}
+
+.welcome-ill-float {
+  animation: illFloat 4.5s ease-in-out infinite;
+}
+
+/* Checkmark Pulse Animation */
+@keyframes checkmarkPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 10px rgba(8,127,115,0.15);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 6px 14px rgba(8,127,115,0.3);
+  }
+}
+
+.welcome-checkmark-pulse {
+  animation: checkmarkPulse 3.5s ease-in-out infinite;
+}
+
+/* Decorative Sparkle Animation */
+@keyframes sparkleLoop {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+.welcome-sparkle-loop {
+  animation: sparkleLoop 4s ease-in-out infinite;
+}
+
+/* Get Started Button Animations */
+@keyframes btnIdleBreathe {
+  0%, 100% {
+    box-shadow: 0 4px 14px rgba(8,127,115,0.2);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(8,127,115,0.35);
+  }
+}
+
+.welcome-btn-cta {
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: btnIdleBreathe 3s ease-in-out infinite;
+}
+
+.welcome-btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(8,127,115,0.4) !important;
+}
+
+.welcome-btn-cta:hover .welcome-btn-arrow {
+  transform: translateX(4px);
+}
+
+.welcome-btn-cta:active {
+  transform: translateY(0) scale(0.97);
+  transition: all 50ms;
+}
+
+.welcome-btn-arrow {
+  transition: transform 200ms ease-out;
+}
+
+/* Accessibility: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .welcome-card-enter,
+  .welcome-ill-enter,
+  .welcome-heading-enter,
+  .welcome-subtitle-enter,
+  .welcome-btn-enter {
+    animation: fadeIn 300ms ease-out forwards !important;
+    transform: none !important;
+  }
+  
+  .welcome-bg-glow,
+  .welcome-paper,
+  .welcome-particle,
+  .welcome-ill-float,
+  .welcome-checkmark-pulse,
+  .welcome-sparkle-loop,
+  .welcome-btn-cta {
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  .welcome-btn-cta:hover,
+  .welcome-btn-cta:active {
+    transform: none !important;
+  }
+  
+  .welcome-btn-cta:hover .welcome-btn-arrow {
+    transform: none !important;
+  }
 }
 
 /* Custom Scrollbar for Textarea */
