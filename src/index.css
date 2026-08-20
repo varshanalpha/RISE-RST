@@ -8,7 +8,7 @@
   }
 }
 
-/* Base animations */
+/* Base transitions and entrances */
 .animate-fade-in {
   animation: fadeIn 300ms ease-out forwards;
 }
@@ -65,95 +65,123 @@
   }
 }
 
-/* Ambient Breathing Background Glow */
-.welcome-bg-glow {
+/* Ambient Breathing Side Glows */
+@keyframes sideGlowBreathe {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.65; transform: scale(1.05); }
+}
+
+.welcome-left-glow {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 15%;
+  left: -200px;
   width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(8,127,115,0.08) 0%, rgba(234,247,244,0.03) 70%, transparent 100%);
+  height: 700px;
+  background: radial-gradient(circle, rgba(8,127,115,0.05) 0%, rgba(234,247,244,0.01) 70%, transparent 100%);
   filter: blur(60px);
   pointer-events: none;
   z-index: 0;
-  animation: bgGlowBreathe 10s ease-in-out infinite alternate;
+  animation: sideGlowBreathe 12s ease-in-out infinite;
 }
 
-@keyframes bgGlowBreathe {
+.welcome-right-glow {
+  position: absolute;
+  top: 15%;
+  right: -200px;
+  width: 500px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(8,127,115,0.05) 0%, rgba(234,247,244,0.01) 70%, transparent 100%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+  animation: sideGlowBreathe 14s ease-in-out infinite;
+}
+
+/* Fall Drift Left Animation */
+@keyframes fallDriftLeft {
   0% {
-    opacity: 0.6;
-    transform: translate(-50%, -50%) scale(0.9);
+    transform: translate3d(0, -120px, 0) rotate(-6deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--op, 0.15);
+  }
+  85% {
+    opacity: var(--op, 0.15);
   }
   100% {
-    opacity: 1;
-    transform: translate(-48%, -52%) scale(1.1);
+    transform: translate3d(-40px, 110vh, 0) rotate(8deg);
+    opacity: 0;
   }
 }
 
-/* Floating Resume Papers Background Animation */
-@keyframes paperFloat1 {
-  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.3; }
-  90% { opacity: 0.3; }
-  100% { transform: translate(-20px, 120px) rotate(15deg); opacity: 0; }
-}
-@keyframes paperFloat2 {
-  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-  15% { opacity: 0.25; }
-  85% { opacity: 0.25; }
-  100% { transform: translate(30px, 140px) rotate(-20deg); opacity: 0; }
-}
-@keyframes paperFloat3 {
-  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-  20% { opacity: 0.35; }
-  80% { opacity: 0.35; }
-  100% { transform: translate(-10px, 90px) rotate(10deg); opacity: 0; }
-}
-@keyframes paperFloat4 {
-  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.2; }
-  90% { opacity: 0.2; }
-  100% { transform: translate(15px, 110px) rotate(-15deg); opacity: 0; }
+/* Fall Drift Right Animation */
+@keyframes fallDriftRight {
+  0% {
+    transform: translate3d(0, -120px, 0) rotate(8deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--op, 0.15);
+  }
+  85% {
+    opacity: var(--op, 0.15);
+  }
+  100% {
+    transform: translate3d(40px, 110vh, 0) rotate(-8deg);
+    opacity: 0;
+  }
 }
 
-.welcome-paper {
+/* Fall Drift Straight Animation */
+@keyframes fallDriftStraight {
+  0% {
+    transform: translate3d(0, -120px, 0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--op, 0.15);
+  }
+  85% {
+    opacity: var(--op, 0.15);
+  }
+  100% {
+    transform: translate3d(0, 110vh, 0) rotate(5deg);
+    opacity: 0;
+  }
+}
+
+.welcome-fall-left {
   position: absolute;
-  background: white;
-  border: 1px solid #DDE8E5;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(8,127,115,0.03);
+  top: -120px;
+  animation: fallDriftLeft linear infinite;
   pointer-events: none;
   z-index: 0;
 }
 
-.welcome-paper-1 { animation: paperFloat1 14s linear infinite; }
-.welcome-paper-2 { animation: paperFloat2 16s linear infinite; }
-.welcome-paper-3 { animation: paperFloat3 12s linear infinite; }
-.welcome-paper-4 { animation: paperFloat4 18s linear infinite; }
-
-/* Subtle Floating Particles */
-@keyframes particlePulse {
-  0%, 100% { opacity: 0.1; transform: scale(0.8) translateY(0); }
-  50% { opacity: 0.35; transform: scale(1.2) translateY(-10px); }
-}
-
-.welcome-particle {
+.welcome-fall-right {
   position: absolute;
-  border-radius: 50%;
-  background-color: #087F73;
+  top: -120px;
+  animation: fallDriftRight linear infinite;
   pointer-events: none;
   z-index: 0;
-  animation: particlePulse 6s ease-in-out infinite;
 }
 
-/* Illustration Floating Animation */
+.welcome-fall-straight {
+  position: absolute;
+  top: -120px;
+  animation: fallDriftStraight linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Illustration Floating Animation (4-6px floating, -1deg to +1deg rotate) */
 @keyframes illFloat {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(-1deg);
   }
   50% {
-    transform: translateY(-5px) rotate(0.8deg);
+    transform: translate3d(0, -5px, 0) rotate(1deg);
   }
 }
 
@@ -196,10 +224,10 @@
 /* Get Started Button Animations */
 @keyframes btnIdleBreathe {
   0%, 100% {
-    box-shadow: 0 4px 14px rgba(8,127,115,0.2);
+    box-shadow: 0 4px 14px rgba(8,127,115,0.15);
   }
   50% {
-    box-shadow: 0 6px 20px rgba(8,127,115,0.35);
+    box-shadow: 0 6px 20px rgba(8,127,115,0.3);
   }
 }
 
@@ -209,16 +237,16 @@
 }
 
 .welcome-btn-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(8,127,115,0.4) !important;
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 8px 24px rgba(8,127,115,0.35) !important;
 }
 
 .welcome-btn-cta:hover .welcome-btn-arrow {
-  transform: translateX(4px);
+  transform: translate3d(4px, 0, 0);
 }
 
 .welcome-btn-cta:active {
-  transform: translateY(0) scale(0.97);
+  transform: translate3d(0, 0, 0) scale(0.97);
   transition: all 50ms;
 }
 
@@ -237,9 +265,11 @@
     transform: none !important;
   }
   
-  .welcome-bg-glow,
-  .welcome-paper,
-  .welcome-particle,
+  .welcome-left-glow,
+  .welcome-right-glow,
+  .welcome-fall-left,
+  .welcome-fall-right,
+  .welcome-fall-straight,
   .welcome-ill-float,
   .welcome-checkmark-pulse,
   .welcome-sparkle-loop,

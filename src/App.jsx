@@ -7,83 +7,290 @@ import ResultsPreview from './components/ResultsPreview';
 
 // Ambient Background Glow, Particles, and Floating Papers (Welcome Page Only)
 const WelcomeBackground = () => {
-  // Config for 7 background papers with varied sizes, positions, delays, and animation classes
-  const papersConfig = [
-    { id: 1, top: '12%', left: '6%', w: '44px', h: '58px', delay: '0s', anim: 'welcome-paper-1' },
-    { id: 2, top: '22%', right: '8%', w: '52px', h: '68px', delay: '3s', anim: 'welcome-paper-2' },
-    { id: 3, top: '65%', left: '4%', w: '40px', h: '52px', delay: '6s', anim: 'welcome-paper-3' },
-    { id: 4, top: '55%', right: '5%', w: '48px', h: '62px', delay: '1s', anim: 'welcome-paper-4' },
-    { id: 5, top: '35%', left: '15%', w: '38px', h: '50px', delay: '8s', anim: 'welcome-paper-2' },
-    { id: 6, top: '75%', right: '14%', w: '46px', h: '60px', delay: '4s', anim: 'welcome-paper-1' },
-    { id: 7, top: '82%', left: '9%', w: '42px', h: '55px', delay: '10s', anim: 'welcome-paper-3' },
-  ];
+  const elements = [
+    // LEFT SIDE ELEMENTS (0% - 25% zone)
+    {
+      id: 'l1',
+      side: 'left',
+      pos: '4%',
+      delay: '-2s',
+      duration: '12s',
+      op: '0.15',
+      type: 'resume',
+      w: '38px',
+      h: '50px',
+      animClass: 'welcome-fall-left',
+      responsive: 'block'
+    },
+    {
+      id: 'l2',
+      side: 'left',
+      pos: '12%',
+      delay: '-8s',
+      duration: '9s',
+      op: '0.20',
+      type: 'dot',
+      w: '8px',
+      h: '8px',
+      animClass: 'welcome-fall-straight',
+      responsive: 'block'
+    },
+    {
+      id: 'l3',
+      side: 'left',
+      pos: '20%',
+      delay: '-4s',
+      duration: '14s',
+      op: '0.10',
+      type: 'jd',
+      w: '38px',
+      h: '50px',
+      animClass: 'welcome-fall-right',
+      responsive: 'block'
+    },
+    {
+      id: 'l4',
+      side: 'left',
+      pos: '8%',
+      delay: '-6s',
+      duration: '11s',
+      op: '0.15',
+      type: 'outline',
+      w: '32px',
+      h: '42px',
+      animClass: 'welcome-fall-straight',
+      responsive: 'hidden sm:block'
+    },
+    {
+      id: 'l5',
+      side: 'left',
+      pos: '16%',
+      delay: '-10s',
+      duration: '15s',
+      op: '0.10',
+      type: 'circle',
+      w: '12px',
+      h: '12px',
+      animClass: 'welcome-fall-left',
+      responsive: 'hidden sm:block'
+    },
+    {
+      id: 'l6',
+      side: 'left',
+      pos: '3%',
+      delay: '-12s',
+      duration: '13s',
+      op: '0.20',
+      type: 'sparkle',
+      w: '14px',
+      h: '14px',
+      animClass: 'welcome-fall-right',
+      responsive: 'hidden lg:block'
+    },
+    {
+      id: 'l7',
+      side: 'left',
+      pos: '14%',
+      delay: '-14s',
+      duration: '10s',
+      op: '0.10',
+      type: 'resume',
+      w: '34px',
+      h: '45px',
+      animClass: 'welcome-fall-left',
+      responsive: 'hidden lg:block'
+    },
+    {
+      id: 'l8',
+      side: 'left',
+      pos: '22%',
+      delay: '0s',
+      duration: '16s',
+      op: '0.15',
+      type: 'dot',
+      w: '6px',
+      h: '6px',
+      animClass: 'welcome-fall-straight',
+      responsive: 'hidden lg:block'
+    },
 
-  // Config for 12 edge particles with varied positions, sizes, and pulse durations
-  const particlesConfig = [
-    { id: 1, top: '10%', left: '15%', size: '6px', duration: '5s' },
-    { id: 2, top: '15%', right: '20%', size: '8px', duration: '7s' },
-    { id: 3, top: '45%', left: '8%', size: '5px', duration: '6s' },
-    { id: 4, top: '50%', right: '10%', size: '7px', duration: '8s' },
-    { id: 5, top: '80%', left: '18%', size: '8px', duration: '9s' },
-    { id: 6, top: '85%', right: '22%', size: '6px', duration: '6s' },
-    { id: 7, top: '25%', left: '5%', size: '6px', duration: '7.5s' },
-    { id: 8, top: '30%', right: '3%', size: '5px', duration: '5.5s' },
-    { id: 9, top: '70%', left: '3%', size: '7px', duration: '8.5s' },
-    { id: 10, top: '75%', right: '6%', size: '8px', duration: '6.5s' },
-    { id: 11, top: '5%', left: '45%', size: '5px', duration: '7s' },
-    { id: 12, top: '92%', right: '45%', size: '6px', duration: '8s' },
+    // RIGHT SIDE ELEMENTS (75% - 100% zone)
+    {
+      id: 'r1',
+      side: 'right',
+      pos: '4%',
+      delay: '-3s',
+      duration: '11s',
+      op: '0.15',
+      type: 'jd',
+      w: '38px',
+      h: '50px',
+      animClass: 'welcome-fall-right',
+      responsive: 'block'
+    },
+    {
+      id: 'r2',
+      side: 'right',
+      pos: '12%',
+      delay: '-9s',
+      duration: '14s',
+      op: '0.10',
+      type: 'circle',
+      w: '12px',
+      h: '12px',
+      animClass: 'welcome-fall-straight',
+      responsive: 'block'
+    },
+    {
+      id: 'r3',
+      side: 'right',
+      pos: '20%',
+      delay: '-5s',
+      duration: '13s',
+      op: '0.15',
+      type: 'resume',
+      w: '38px',
+      h: '50px',
+      animClass: 'welcome-fall-left',
+      responsive: 'block'
+    },
+    {
+      id: 'r4',
+      side: 'right',
+      pos: '8%',
+      delay: '-7s',
+      duration: '12s',
+      op: '0.10',
+      type: 'outline',
+      w: '32px',
+      h: '42px',
+      animClass: 'welcome-fall-straight',
+      responsive: 'hidden sm:block'
+    },
+    {
+      id: 'r5',
+      side: 'right',
+      pos: '16%',
+      delay: '-11s',
+      duration: '8s',
+      op: '0.20',
+      type: 'dot',
+      w: '8px',
+      h: '8px',
+      animClass: 'welcome-fall-right',
+      responsive: 'hidden sm:block'
+    },
+    {
+      id: 'r6',
+      side: 'right',
+      pos: '3%',
+      delay: '-13s',
+      duration: '15s',
+      op: '0.20',
+      type: 'sparkle',
+      w: '14px',
+      h: '14px',
+      animClass: 'welcome-fall-left',
+      responsive: 'hidden lg:block'
+    },
+    {
+      id: 'r7',
+      side: 'right',
+      pos: '14%',
+      delay: '-15s',
+      duration: '10s',
+      op: '0.15',
+      type: 'jd',
+      w: '34px',
+      h: '45px',
+      animClass: 'welcome-fall-right',
+      responsive: 'hidden lg:block'
+    },
+    {
+      id: 'r8',
+      side: 'right',
+      pos: '22%',
+      delay: '0s',
+      duration: '16s',
+      op: '0.10',
+      type: 'circle',
+      w: '10px',
+      h: '10px',
+      animClass: 'welcome-fall-straight',
+      responsive: 'hidden lg:block'
+    }
   ];
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
-      {/* Radial Soft Teal/Mint Glow behind card */}
-      <div className="welcome-bg-glow"></div>
+      {/* Side radial gradient glows */}
+      <div className="welcome-left-glow"></div>
+      <div className="welcome-right-glow"></div>
 
-      {/* Floating Papers */}
-      {papersConfig.map((p) => (
-        <div
-          key={`paper-${p.id}`}
-          className={`welcome-paper ${p.anim}`}
-          style={{
-            top: p.top,
-            left: p.left,
-            right: p.right,
-            width: p.w,
-            height: p.h,
-            animationDelay: p.delay,
-          }}
-        >
-          {/* Micro-layout design inside simplified resume paper */}
-          <div className="w-full h-full p-1.5 flex flex-col gap-1 relative overflow-hidden">
-            {/* Header row with tiny teal accent */}
-            <div className="flex justify-between items-center">
-              <div className="w-4 h-1.5 bg-[#087F73]/20 rounded-xs"></div>
-              <div className="w-1.5 h-1.5 bg-[#087F73]/50 rounded-full"></div>
-            </div>
-            {/* Body lines */}
-            <div className="w-full h-0.5 bg-gray-100 rounded-full"></div>
-            <div className="w-11/12 h-0.5 bg-gray-100 rounded-full"></div>
-            <div className="w-5/6 h-0.5 bg-gray-100 rounded-full"></div>
-            <div className="w-4/5 h-0.5 bg-gray-100 rounded-full"></div>
+      {/* Render Falling Items */}
+      {elements.map((el) => {
+        const itemStyle = {
+          [el.side]: el.pos,
+          width: el.w,
+          height: el.h,
+          animationDelay: el.delay,
+          animationDuration: el.duration,
+          '--op': el.op
+        };
+
+        return (
+          <div
+            key={el.id}
+            className={`${el.animClass} ${el.responsive}`}
+            style={itemStyle}
+          >
+            {el.type === 'resume' && (
+              <div className="bg-white border border-[#DDE8E5] rounded-[4px] p-1.5 flex flex-col gap-1 w-full h-full shadow-[0_2px_6px_rgba(8,127,115,0.02)] select-none">
+                <div className="flex justify-between items-center mb-0.5">
+                  <span className="text-[7px] font-extrabold text-[#087F73] leading-none tracking-tighter">CV</span>
+                  <div className="w-1 h-1 bg-[#087F73]/25 rounded-full"></div>
+                </div>
+                <div className="w-full h-[1px] bg-gray-200 rounded-full"></div>
+                <div className="w-11/12 h-[1px] bg-gray-200 rounded-full"></div>
+                <div className="w-3/4 h-[1px] bg-gray-200 rounded-full"></div>
+              </div>
+            )}
+
+            {el.type === 'jd' && (
+              <div className="bg-white border border-[#DDE8E5] rounded-[4px] p-1.5 flex flex-col gap-1 w-full h-full shadow-[0_2px_6px_rgba(8,127,115,0.02)] select-none">
+                <div className="flex justify-between items-center mb-0.5">
+                  <span className="text-[7px] font-extrabold text-[#087F73] leading-none tracking-tighter">JD</span>
+                  <div className="w-1 h-1 bg-[#087F73]/25 rounded-full"></div>
+                </div>
+                <div className="w-full h-[1px] bg-gray-200 rounded-full"></div>
+                <div className="w-4/5 h-[1px] bg-gray-200 rounded-full"></div>
+                <div className="w-2/3 h-[1px] bg-gray-200 rounded-full"></div>
+              </div>
+            )}
+
+            {el.type === 'outline' && (
+              <div className="border border-dashed border-[#DDE8E5] rounded-[4px] p-1 flex flex-col gap-1 w-full h-full select-none">
+                <div className="w-full h-[1px] bg-gray-200 rounded-full"></div>
+                <div className="w-5/6 h-[1px] bg-gray-200 rounded-full"></div>
+              </div>
+            )}
+
+            {el.type === 'circle' && (
+              <div className="w-full h-full rounded-full border border-[#087F73]/30 bg-transparent select-none"></div>
+            )}
+
+            {el.type === 'dot' && (
+              <div className="w-full h-full rounded-full bg-[#087F73]/40 select-none"></div>
+            )}
+
+            {el.type === 'sparkle' && (
+              <svg fill="currentColor" viewBox="0 0 24 24" className="w-full h-full text-teal-400/80 select-none">
+                <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
+              </svg>
+            )}
           </div>
-        </div>
-      ))}
-
-      {/* Edge Particles */}
-      {particlesConfig.map((pt) => (
-        <div
-          key={`particle-${pt.id}`}
-          className="welcome-particle opacity-20"
-          style={{
-            top: pt.top,
-            left: pt.left,
-            right: pt.right,
-            width: pt.size,
-            height: pt.size,
-            animationDuration: pt.duration,
-          }}
-        />
-      ))}
+        );
+      })}
     </div>
   );
 };
