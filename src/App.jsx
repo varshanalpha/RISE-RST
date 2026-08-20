@@ -5,6 +5,50 @@ import ReviewCard from './components/ReviewCard';
 import LoadingScreen from './components/LoadingScreen';
 import ResultsPreview from './components/ResultsPreview';
 
+// Premium SVG Illustration of floating resume papers
+const ResumeIllustration = () => (
+  <div className="relative w-48 h-40 mx-auto mb-6 flex items-center justify-center">
+    {/* Floating Job Description Page */}
+    <div className="absolute top-2 left-8 w-24 h-32 bg-white border border-[#DDE8E5] rounded-xl shadow-xs -rotate-12 transform origin-bottom-left pointer-events-none select-none">
+      <div className="p-3 space-y-2">
+        <div className="w-6 h-6 rounded-lg bg-teal-50 flex items-center justify-center text-[10px] text-[#087F73] font-bold">JD</div>
+        <div className="w-full h-1 bg-gray-100 rounded"></div>
+        <div className="w-11/12 h-1 bg-gray-100 rounded"></div>
+        <div className="w-5/6 h-1 bg-gray-100 rounded"></div>
+      </div>
+    </div>
+    
+    {/* Floating Resume Page (Elevated) */}
+    <div className="absolute top-4 right-8 w-24 h-32 bg-white border border-[#DDE8E5] rounded-xl shadow-md rotate-12 transform origin-bottom-right pointer-events-none select-none z-10">
+      <div className="p-3 space-y-2 relative">
+        <div className="w-6 h-6 rounded-lg bg-[#EAF7F4] flex items-center justify-center text-[10px] text-[#087F73] font-bold">CV</div>
+        <div className="w-full h-1 bg-gray-100 rounded"></div>
+        <div className="w-full h-1 bg-gray-100 rounded"></div>
+        <div className="w-4/5 h-1 bg-[#087F73]/20 rounded"></div>
+        
+        {/* Verification Checkmark Badge */}
+        <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-[#087F73] rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+          <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    {/* Sparkle Icons */}
+    <div className="absolute top-0 right-4 w-5 h-5 text-teal-400 opacity-60 animate-pulse select-none pointer-events-none">
+      <svg fill="currentColor" viewBox="0 0 24 24" className="w-full h-full">
+        <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
+      </svg>
+    </div>
+    <div className="absolute bottom-2 left-4 w-3.5 h-3.5 text-amber-400 opacity-80 select-none pointer-events-none">
+      <svg fill="currentColor" viewBox="0 0 24 24" className="w-full h-full">
+        <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
+      </svg>
+    </div>
+  </div>
+);
+
 export default function App() {
   const [currentStep, setCurrentStep] = useState(0);
   
@@ -140,7 +184,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB]">
+    <div className="min-h-screen bg-[#F8FBFA]">
       {/* STEP 0: WELCOME */}
       {currentStep === 0 && (
         <QuestionLayout
@@ -148,17 +192,16 @@ export default function App() {
           totalSteps={totalSteps}
           onContinue={handleNext}
           continueText="Get Started"
+          maxWidth="max-w-[580px]"
+          isWelcome={true}
         >
-          <div className="flex flex-col items-center justify-center h-full pt-12 md:pt-20 text-center">
-            <div className="w-24 h-24 bg-teal-50 rounded-3xl flex items-center justify-center mb-8 shadow-sm">
-              <div className="w-12 h-12 bg-teal-600 rounded-xl transform rotate-12 flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-5 tracking-tight">
+          <div className="flex flex-col items-center justify-center text-center">
+            <ResumeIllustration />
+            <h1 className="text-3xl md:text-[36px] font-bold text-[#10202B] leading-tight tracking-tight mb-4">
               Let's find your best match.
             </h1>
-            <p className="text-lg text-gray-500 max-w-md mx-auto">
+            <div className="w-12 h-[3px] bg-[#087F73] mx-auto mb-5 rounded-full"></div>
+            <p className="text-[#6B7780] text-[16px] md:text-[17px] leading-relaxed max-w-md mx-auto">
               Tell us what role you're looking for, upload your resume, and add the job description you want to compare against.
             </p>
           </div>
@@ -205,18 +248,18 @@ export default function App() {
         >
           <div className="space-y-4">
             <ReviewCard title="RESUME" onEdit={() => setCurrentStep(1)}>
-              <div className="flex items-center text-teal-700 font-medium">
+              <div className="flex items-center text-[#087F73] font-semibold">
                 <span className="mr-2">✓</span> {candidateData.resume?.name}
               </div>
             </ReviewCard>
             
             <ReviewCard title="JOB DESCRIPTION" onEdit={() => setCurrentStep(1)}>
               {candidateData.jobDescriptionFile ? (
-                <div className="flex items-center text-teal-700 font-medium">
+                <div className="flex items-center text-[#087F73] font-semibold">
                   <span className="mr-2">✓</span> {candidateData.jobDescriptionFile.name}
                 </div>
               ) : (
-                <div className="flex items-center text-teal-700 font-medium">
+                <div className="flex items-center text-[#087F73] font-semibold">
                   <span className="mr-2">✓</span> Job description added ({candidateData.jobDescriptionText.length} characters)
                 </div>
               )}

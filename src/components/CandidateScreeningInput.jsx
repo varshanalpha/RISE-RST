@@ -13,15 +13,15 @@ export default function CandidateScreeningInput({
   onJdTextChange
 }) {
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       {/* SECTION 01 — RESUME */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8 shadow-sm">
-        <div className="mb-5">
-          <span className="text-xs font-bold text-teal-600 uppercase tracking-widest bg-teal-50 px-2.5 py-1 rounded-md border border-teal-100">
+      <section className="animate-fade-in">
+        <div className="mb-6">
+          <span className="inline-block text-[11px] font-extrabold text-[#087F73] uppercase tracking-[0.2em] bg-[#EAF7F4] px-3.5 py-1.5 rounded-lg border border-teal-100/50">
             01 — Your Resume
           </span>
-          <h3 className="text-xl font-semibold text-gray-900 mt-3">Upload your resume</h3>
-          <p className="text-sm text-gray-500 mt-1">Your resume helps the AI understand your skills and experience.</p>
+          <h3 className="text-xl font-bold text-[#10202B] mt-3 tracking-tight">Upload your resume</h3>
+          <p className="text-sm text-[#6B7780] mt-1 leading-relaxed">Your resume helps the AI understand your skills and experience.</p>
         </div>
 
         <ResumeUploader
@@ -32,13 +32,13 @@ export default function CandidateScreeningInput({
       </section>
 
       {/* SECTION 02 — JOB DESCRIPTION */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8 shadow-sm">
-        <div className="mb-5">
-          <span className="text-xs font-bold text-teal-600 uppercase tracking-widest bg-teal-50 px-2.5 py-1 rounded-md border border-teal-100">
+      <section className="animate-fade-in border-t border-gray-100 pt-10">
+        <div className="mb-6">
+          <span className="inline-block text-[11px] font-extrabold text-[#087F73] uppercase tracking-[0.2em] bg-[#EAF7F4] px-3.5 py-1.5 rounded-lg border border-teal-100/50">
             02 — Job Description
           </span>
-          <h3 className="text-xl font-semibold text-gray-900 mt-3">Add the job description</h3>
-          <p className="text-sm text-gray-500 mt-1">Give us the requirements so the AI can compare your resume against them.</p>
+          <h3 className="text-xl font-bold text-[#10202B] mt-3 tracking-tight">Add the job description</h3>
+          <p className="text-sm text-[#6B7780] mt-1 leading-relaxed">Give us the requirements so the AI can compare your resume against them.</p>
         </div>
 
         <JobDescriptionInput

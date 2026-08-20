@@ -11,7 +11,7 @@ export default function ResumeUploader({ file, onUpload, onClear }) {
     if (!selectedFile) return;
 
     if (selectedFile.size > 10 * 1024 * 1024) {
-      setError('Upload your resume to continue.');
+      setError('File must be smaller than 10MB.');
       return;
     }
 
@@ -43,21 +43,27 @@ export default function ResumeUploader({ file, onUpload, onClear }) {
 
   if (file) {
     return (
-      <div className="w-full border-2 border-teal-500 bg-teal-50 rounded-xl p-6 flex flex-col items-center justify-center animate-fade-in relative shadow-sm">
-        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-teal-600 mb-3 shadow-sm">
-          <FileText className="w-6 h-6" />
+      <div className="w-full border border-[#087F73] bg-[#EAF7F4]/30 rounded-[16px] p-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in relative">
+        <div className="flex items-center gap-4 text-center md:text-left">
+          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#087F73] shadow-sm border border-[#DDE8E5]">
+            <FileText className="w-6 h-6" />
+          </div>
+          <div>
+            <div className="font-semibold text-[#10202B] text-base">{file.name}</div>
+            <div className="text-xs text-[#6B7780] mt-0.5">{formatSize(file.size)}</div>
+          </div>
         </div>
-        <div className="font-medium text-teal-900 text-base">{file.name}</div>
-        <div className="text-sm text-teal-700 mt-1">{formatSize(file.size)}</div>
-        <div className="text-sm font-medium text-teal-600 mt-3 flex items-center bg-teal-100/70 px-3 py-1 rounded-full">
-          <span className="mr-1">✓</span> Ready
+        <div className="flex items-center gap-4">
+          <div className="text-sm font-semibold text-[#087F73] bg-[#EAF7F4] px-3.5 py-1 rounded-full border border-teal-100 flex items-center gap-1.5">
+            <span>✓</span> Ready
+          </div>
+          <button 
+            onClick={onClear}
+            className="text-sm text-[#6B7780] hover:text-[#10202B] font-semibold transition-colors bg-white hover:bg-gray-50 border border-[#DDE8E5] px-4 py-2 rounded-xl"
+          >
+            Change
+          </button>
         </div>
-        <button 
-          onClick={onClear}
-          className="mt-4 text-sm text-gray-500 hover:text-gray-700 underline"
-        >
-          Change file
-        </button>
       </div>
     );
   }
@@ -65,25 +71,25 @@ export default function ResumeUploader({ file, onUpload, onClear }) {
   return (
     <div>
       <div
-        className={`w-full border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors
+        className={`w-full border-2 border-dashed rounded-[16px] p-8 md:p-12 flex flex-col items-center justify-center cursor-pointer transition-all duration-200
           ${isDragging 
-            ? 'border-teal-500 bg-teal-50' 
-            : 'border-gray-300 hover:border-teal-400 hover:bg-gray-50'
+            ? 'border-[#087F73] bg-[#EAF7F4]/30 scale-[1.01]' 
+            : 'border-[#DDE8E5] hover:border-[#087F73] hover:bg-[#F8FBFA]'
           }`}
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
       >
-        <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors ${
-          isDragging ? 'bg-teal-100 text-teal-600' : 'bg-gray-100 text-gray-400'
+        <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors duration-200 ${
+          isDragging ? 'bg-[#087F73] text-white' : 'bg-[#EAF7F4] text-[#087F73]'
         }`}>
-          <UploadCloud className="w-6 h-6" />
+          <UploadCloud className="w-7 h-7" />
         </div>
-        <div className="font-medium text-gray-900 text-base">Drop your resume here</div>
-        <div className="text-gray-500 text-sm mt-0.5 mb-3">or choose a file</div>
-        <div className="text-xs font-medium text-gray-400 uppercase tracking-wider bg-gray-100 px-3 py-1 rounded-full">
-          PDF or DOCX · 10 MB
+        <div className="font-bold text-[#10202B] text-lg">Drop your resume here</div>
+        <div className="text-[#6B7780] text-sm mt-0.5 mb-4">or choose a file</div>
+        <div className="text-[11px] font-bold text-[#6B7780] tracking-wide uppercase bg-gray-100/80 px-3.5 py-1.5 rounded-full">
+          PDF · DOCX · 10 MB
         </div>
         <input 
           type="file" 
@@ -94,8 +100,8 @@ export default function ResumeUploader({ file, onUpload, onClear }) {
         />
       </div>
       {error && (
-        <div className="mt-3 text-red-500 text-sm flex items-center animate-fade-in">
-          <span className="bg-red-100 text-red-600 rounded-full w-4 h-4 flex items-center justify-center text-xs mr-2 font-bold">!</span>
+        <div className="mt-3 text-red-500 text-sm flex items-center justify-center animate-fade-in font-medium">
+          <span className="bg-red-100 text-red-600 rounded-full w-4.5 h-4.5 flex items-center justify-center text-[10px] mr-2 font-bold">!</span>
           {error}
         </div>
       )}

@@ -1,30 +1,32 @@
 import React from 'react';
 
 export default function ProgressBar({ currentStep, totalSteps }) {
-  // Generate dots and lines
   const elements = [];
   
   for (let i = 1; i <= totalSteps; i++) {
     const isCompleted = i < currentStep;
     const isCurrent = i === currentStep;
+    const isFuture = i > currentStep;
     
-    // Dot
+    // Dot Node
     elements.push(
       <div 
         key={`dot-${i}`}
-        className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-          isCompleted ? 'bg-teal-600' : isCurrent ? 'bg-teal-600 ring-4 ring-teal-100' : 'bg-gray-200'
+        className={`w-3 h-3 rounded-full transition-all duration-300 flex-shrink-0 ${
+          !isFuture 
+            ? 'bg-[#087F73]' 
+            : 'bg-transparent border-2 border-gray-300'
         }`}
       />
     );
     
-    // Line (except after the last dot)
+    // Line Connector (except after the last dot)
     if (i < totalSteps) {
       elements.push(
         <div 
           key={`line-${i}`}
-          className={`flex-1 h-[2px] mx-2 rounded transition-colors duration-300 ${
-            isCompleted ? 'bg-teal-600' : 'bg-gray-200'
+          className={`flex-1 h-[2px] mx-1 transition-colors duration-300 ${
+            isCompleted ? 'bg-[#087F73]' : 'bg-gray-200'
           }`}
         />
       );
@@ -32,7 +34,7 @@ export default function ProgressBar({ currentStep, totalSteps }) {
   }
 
   return (
-    <div className="flex items-center w-full">
+    <div className="flex items-center w-full max-w-sm mx-auto">
       {elements}
     </div>
   );
