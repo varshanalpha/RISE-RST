@@ -5,6 +5,7 @@ import json
 import sys
 from app.extractor import ExtractionError, extract_text
 from app.field_parser import parse_fields
+from app.jd_parser import JDParseError, parse_jd, read_jd_file
 from app.segmenter import segment_text
 
 
@@ -18,12 +19,13 @@ def main() -> None:
     parser.add_argument(
         "--jd",
         required=False,
-        help="Path to the job description file",
+        help="Path to the job description file (.txt)",
     )
 
     args = parser.parse_args()
 
     try:
+        # 1. Resume Processing Pipeline
         extracted_text = extract_text(args.file)
         print("===== EXTRACTED RESUME TEXT =====\n")
         print(extracted_text)
@@ -44,8 +46,28 @@ def main() -> None:
         print("\n===== PARSED CANDIDATE FIELDS =====\n")
         print(json.dumps(parsed_fields, indent=2))
         print("\n===== FIELD PARSING COMPLETE =====")
+
+        # 2. Job Description Processing Pipeline
+        if args.jd:
+            jd_text = read_jd_file(args.jd)
+            jd_result = parse_jd(jd_text)
+            requirements = jd_result.get("requirements", [])
+
+            print("\n===== PARSED JOB REQUIREMENTS =====\n")
+            for req in requirements:
+                print(f"[{req['requirement_id']}]")
+                print(f"Category: {req['category']}")
+                print(f"Value: {req['value']}")
+                print(f"Priority: {req['priority']}")
+                print(f"Evidence: {req['evidence']}")
+                print()
+            print("===== JD PARSING COMPLETE =====")
+
     except ExtractionError as e:
-        print(f"Error: {e}", file=sys.stderr)
+        print(f"Extraction Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    except JDParseError as e:
+        print(f"JD Parse Error: {e}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
         print(f"Unexpected Error: {e}", file=sys.stderr)
@@ -54,6 +76,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 

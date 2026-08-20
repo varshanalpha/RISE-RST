@@ -95,3 +95,46 @@ class CandidateProfile:
         }
 
 
+class RequirementDict(TypedDict):
+    """Dictionary representation of a parsed job requirement."""
+
+    requirement_id: str
+    category: str
+    value: str
+    priority: str
+    evidence: str
+
+
+@dataclass
+class Requirement:
+    """Represents a single job description requirement."""
+
+    requirement_id: str
+    category: str  # SKILL, EXPERIENCE, EDUCATION, CERTIFICATION, RESPONSIBILITY, OTHER
+    value: str
+    priority: str  # REQUIRED, PREFERRED, UNSPECIFIED
+    evidence: str
+
+    def to_dict(self) -> RequirementDict:
+        return {
+            "requirement_id": self.requirement_id,
+            "category": self.category,
+            "value": self.value,
+            "priority": self.priority,
+            "evidence": self.evidence,
+        }
+
+
+@dataclass
+class RequirementProfile:
+    """Collection of extracted job description requirements."""
+
+    requirements: List[Requirement]
+
+    def to_dict(self) -> Dict[str, List[RequirementDict]]:
+        return {
+            "requirements": [r.to_dict() for r in self.requirements]
+        }
+
+
+

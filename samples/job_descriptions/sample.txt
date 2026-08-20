@@ -1,0 +1,58 @@
+AI/ML ENGINEER
+
+Company: TechVision AI
+Location: Bengaluru, India
+Employment Type: Full-Time
+Experience: 0–2 years
+
+ABOUT THE ROLE
+
+We are looking for a motivated AI/ML Engineer to join our engineering team and help build production-ready artificial intelligence and machine learning solutions. The ideal candidate should have strong Python programming skills and practical knowledge of machine learning and deep learning.
+
+RESPONSIBILITIES
+
+- Develop and deploy machine learning models for real-world applications.
+- Build data preprocessing and feature engineering pipelines.
+- Train, evaluate, and optimize machine learning and deep learning models.
+- Work with computer vision and natural language processing applications.
+- Develop APIs to integrate machine learning models with web applications.
+- Experiment with Generative AI, Large Language Models, and AI Agents.
+- Collaborate with frontend, backend, and product teams.
+- Monitor model performance and improve models based on evaluation results.
+- Write clean, maintainable, and well-documented code.
+- Participate in code reviews and technical discussions.
+
+REQUIRED QUALIFICATIONS
+
+- Bachelor's degree in Computer Science, Artificial Intelligence, Data Science, or a related field.
+- Strong programming knowledge in Python.
+- Good understanding of Machine Learning fundamentals.
+- Experience with Scikit-learn and at least one deep learning framework such as TensorFlow or PyTorch.
+- Understanding of data preprocessing, feature engineering, model evaluation, and optimization.
+- Knowledge of SQL and relational databases.
+- Familiarity with Git and GitHub.
+- Understanding of REST APIs and backend development.
+- Strong problem-solving and analytical skills.
+
+PREFERRED QUALIFICATIONS
+
+- Experience with YOLO, OpenCV, or other computer vision frameworks.
+- Experience with Large Language Models and Generative AI.
+- Knowledge of Retrieval-Augmented Generation (RAG).
+- Experience building AI Agents.
+- Familiarity with Docker and cloud platforms such as AWS.
+- Experience deploying machine learning models into production.
+- Knowledge of PostgreSQL or Supabase.
+- Experience developing full-stack AI applications.
+
+WHAT WE OFFER
+
+- Opportunity to work on real-world AI products.
+- Mentorship from experienced AI/ML engineers.
+- Exposure to Generative AI and modern machine learning technologies.
+- Learning and development opportunities.
+- Collaborative engineering environment.
+
+KEYWORDS
+
+Python, Machine Learning, Deep Learning, TensorFlow, PyTorch, Scikit-learn, YOLO, OpenCV, NLP, Generative AI, LLM, RAG, AI Agents, SQL, PostgreSQL, REST API, Git, GitHub, Docker, AWS.

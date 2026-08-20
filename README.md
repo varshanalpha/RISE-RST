@@ -1,8 +1,9 @@
 # Resume Parser Agent
 
-> **Phase 4: Field Parsing**
+> **Phase 5: Job Description Parsing**
 
 A CLI-based system that processes resume files (PDF/DOCX) alongside job descriptions to extract structured candidate profiles with traceable text evidence and score job fit.
+
 
 
 
