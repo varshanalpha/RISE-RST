@@ -6,6 +6,7 @@ import sys
 from app.extractor import ExtractionError, extract_text
 from app.field_parser import parse_fields
 from app.jd_parser import JDParseError, parse_jd, read_jd_file
+from app.matcher import MatcherError, match_requirements
 from app.segmenter import segment_text
 
 
@@ -47,7 +48,7 @@ def main() -> None:
         print(json.dumps(parsed_fields, indent=2))
         print("\n===== FIELD PARSING COMPLETE =====")
 
-        # 2. Job Description Processing Pipeline
+        # 2. Job Description Processing & Matching Pipeline
         if args.jd:
             jd_text = read_jd_file(args.jd)
             jd_result = parse_jd(jd_text)
@@ -63,11 +64,30 @@ def main() -> None:
                 print()
             print("===== JD PARSING COMPLETE =====")
 
+            # 3. Requirement Matching
+            match_result = match_requirements(parsed_fields, jd_result)
+            matches = match_result.get("matches", [])
+
+            print("\n===== REQUIREMENT MATCH RESULTS =====\n")
+            for m in matches:
+                print(f"[{m['requirement_id']}]")
+                print(f"Category: {m['category']}")
+                print(f"Requirement: {m['requirement_value']}")
+                print(f"Priority: {m['priority']}")
+                print(f"Status: {m['status']}")
+                print(f"JD Evidence: {m['jd_evidence']}")
+                print(f"Resume Evidence: {m['resume_evidence']}")
+                print()
+            print("===== MATCHING COMPLETE =====")
+
     except ExtractionError as e:
         print(f"Extraction Error: {e}", file=sys.stderr)
         sys.exit(1)
     except JDParseError as e:
         print(f"JD Parse Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    except MatcherError as e:
+        print(f"Matcher Error: {e}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
         print(f"Unexpected Error: {e}", file=sys.stderr)
@@ -76,6 +96,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 

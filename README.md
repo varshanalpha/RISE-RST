@@ -1,8 +1,9 @@
 # Resume Parser Agent
 
-> **Phase 5: Job Description Parsing**
+> **Phase 6: Deterministic Requirement Matching**
 
 A CLI-based system that processes resume files (PDF/DOCX) alongside job descriptions to extract structured candidate profiles with traceable text evidence and score job fit.
+
 
 
 

@@ -137,4 +137,53 @@ class RequirementProfile:
         }
 
 
+class RequirementMatchDict(TypedDict):
+    """Dictionary representation of a single requirement match result."""
+
+    requirement_id: str
+    category: str
+    requirement_value: str
+    priority: str
+    status: str  # "MATCHED", "PARTIAL", "NOT_FOUND"
+    jd_evidence: str
+    resume_evidence: str
+
+
+@dataclass
+class RequirementMatch:
+    """Represents the match status and evidence for a single job requirement."""
+
+    requirement_id: str
+    category: str
+    requirement_value: str
+    priority: str
+    status: str  # "MATCHED", "PARTIAL", "NOT_FOUND"
+    jd_evidence: str
+    resume_evidence: str
+
+    def to_dict(self) -> RequirementMatchDict:
+        return {
+            "requirement_id": self.requirement_id,
+            "category": self.category,
+            "requirement_value": self.requirement_value,
+            "priority": self.priority,
+            "status": self.status,
+            "jd_evidence": self.jd_evidence,
+            "resume_evidence": self.resume_evidence,
+        }
+
+
+@dataclass
+class MatchProfile:
+    """Collection of match results for all job description requirements."""
+
+    matches: List[RequirementMatch]
+
+    def to_dict(self) -> Dict[str, List[RequirementMatchDict]]:
+        return {
+            "matches": [m.to_dict() for m in self.matches]
+        }
+
+
+
 
