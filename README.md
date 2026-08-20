@@ -1,8 +1,10 @@
 # Resume Parser Agent
 
-> **Phase 2: Resume Text Extraction**
+> **Phase 4: Field Parsing**
 
 A CLI-based system that processes resume files (PDF/DOCX) alongside job descriptions to extract structured candidate profiles with traceable text evidence and score job fit.
+
+
 
 ## Planned Architecture
 
