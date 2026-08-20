@@ -1,12 +1,12 @@
 node_modules/
 dist/
-dist-ssr/
 .DS_Store
-.venv/
-venv/
+.gitkeep
+*.swp
 __pycache__/
 *.py[cod]
 .env
-*.local
+.venv/
+venv/
 output/*.json
 output/*.md
