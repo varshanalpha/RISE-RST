@@ -1,4 +1,8 @@
+node_modules/
+dist/
 .DS_Store
+.gitkeep
+*.swp
 __pycache__/
 *.py[cod]
 .env
@@ -6,4 +10,3 @@ __pycache__/
 venv/
 output/*.json
 output/*.md
-
