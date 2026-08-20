@@ -1,0 +1,3 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/resume-parser-agent/.venv/bin/python"
+}
