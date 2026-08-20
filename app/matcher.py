@@ -1,4 +1,4 @@
-"""Deterministic Resume-to-Job Requirement Matching Module with Precise Evidence Selection."""
+"""Deterministic Resume-to-Job Requirement Matching Module with Precise Evidence Selection & Cleanup."""
 
 import re
 from typing import Any, Dict, List, Optional, Set, Tuple
@@ -27,6 +27,35 @@ SKILL_ALIASES: Dict[str, str] = {
     "postgres": "postgresql",
     "rest api": "rest apis",
 }
+
+SECTION_DISPLAY_NAMES: Dict[str, str] = {
+    "experience": "Experience",
+    "skills": "Skills",
+    "projects": "Projects",
+    "education": "Education",
+    "certifications": "Certifications",
+    "summary": "Summary",
+    "contact": "Contact",
+}
+
+
+def clean_evidence(text: Optional[str]) -> str:
+    """Clean PDF CID artifacts, unicode escapes, control characters, and malformed whitespace."""
+    if not text or text == "NOT_FOUND":
+        return "NOT_FOUND"
+
+    # Remove (cid:number) artifacts
+    cleaned = re.sub(r"\(cid:\d+\)", "", str(text))
+
+    # Normalize common unicode characters and dashes
+    cleaned = cleaned.replace("\u2014", "—").replace("\u2013", "–")
+
+    # Clean multiline lines and whitespace
+    lines = [re.sub(r"\s+", " ", line).strip() for line in cleaned.split("\n")]
+    lines = [re.sub(r"^[•\-\*\s]+", "", l).strip() for l in lines if l]
+
+    final_str = "\n".join(lines).strip()
+    return final_str if final_str else "NOT_FOUND"
 
 
 def match_requirements(
@@ -64,12 +93,14 @@ def match_requirements(
         priority = req.get("priority", "UNSPECIFIED")
         jd_evidence = req.get("evidence", req_value)
 
-        status, resume_evidence = _match_single_requirement(
+        status, raw_resume_evidence, source_section = _match_single_requirement(
             category=category,
             req_value=req_value,
             jd_evidence=jd_evidence,
             candidate_profile=candidate_profile,
         )
+
+        cleaned_resume_evidence = clean_evidence(raw_resume_evidence)
 
         matches.append(
             RequirementMatch(
@@ -79,7 +110,8 @@ def match_requirements(
                 priority=priority,
                 status=status,
                 jd_evidence=jd_evidence,
-                resume_evidence=resume_evidence,
+                resume_evidence=cleaned_resume_evidence,
+                source_section=source_section if status != "NOT_FOUND" else None,
             )
         )
 
@@ -92,7 +124,7 @@ def _match_single_requirement(
     req_value: str,
     jd_evidence: str,
     candidate_profile: Dict[str, Any],
-) -> Tuple[str, str]:
+) -> Tuple[str, str, Optional[str]]:
     """Match a single requirement against candidate profile evidence."""
     cat_upper = category.upper()
 
@@ -201,15 +233,14 @@ def _extract_target_terms(req_value: str) -> List[str]:
     return terms
 
 
-def _match_skill(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str]:
+def _match_skill(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str, Optional[str]]:
     target_terms = _extract_target_terms(req_value)
     snippets = _get_discrete_resume_snippets(candidate_profile)
 
     matched_terms: Set[str] = set()
-    scored_snippets: List[Tuple[int, str]] = []
+    scored_snippets: List[Tuple[int, str, str]] = []
 
     for snip_text, sec_name in snippets:
-        # Ignore full line headings like 'Programming: Python, Java...' if single skill items exist
         if snip_text.startswith("Programming:") or snip_text.startswith("Tools:") or snip_text.startswith("Databases:"):
             continue
 
@@ -222,56 +253,59 @@ def _match_skill(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str
                 match_count += 1
 
         if match_count > 0:
-            scored_snippets.append((match_count, snip_text))
+            scored_snippets.append((match_count, snip_text, sec_name))
 
-    # Sort snippets by number of matched terms descending
     scored_snippets.sort(key=lambda x: x[0], reverse=True)
 
     best_matching_snippets: List[str] = []
-    for count, snip_text in scored_snippets:
+    source_sec: Optional[str] = None
+
+    for count, snip_text, sec_name in scored_snippets:
         if snip_text not in best_matching_snippets:
             best_matching_snippets.append(snip_text)
+            if not source_sec:
+                source_sec = SECTION_DISPLAY_NAMES.get(sec_name, sec_name.capitalize())
 
     if len(matched_terms) == len(target_terms) and matched_terms:
         evidence_str = "\n".join(best_matching_snippets[:2]) if best_matching_snippets else "NOT_FOUND"
-        return ("MATCHED", evidence_str)
+        return ("MATCHED", evidence_str, source_sec)
     elif len(matched_terms) > 0:
         evidence_str = "\n".join(best_matching_snippets[:2]) if best_matching_snippets else "NOT_FOUND"
-        return ("PARTIAL", evidence_str)
+        return ("PARTIAL", evidence_str, source_sec)
 
-    return ("NOT_FOUND", "NOT_FOUND")
+    return ("NOT_FOUND", "NOT_FOUND", None)
 
 
-def _match_experience(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str]:
+def _match_experience(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str, Optional[str]]:
     exp_field = candidate_profile.get("experience", {})
     if isinstance(exp_field, dict) and exp_field.get("status") == "FOUND":
         ev = exp_field.get("evidence", "")
         if ev and ev != "NOT_FOUND":
-            return ("MATCHED", str(ev).strip())
+            return ("MATCHED", str(ev).strip(), "Experience")
 
     proj_field = candidate_profile.get("projects", {})
     if isinstance(proj_field, dict) and proj_field.get("status") == "FOUND":
         ev = proj_field.get("evidence", "")
         if ev and ev != "NOT_FOUND":
-            return ("PARTIAL", str(ev).strip())
+            return ("PARTIAL", str(ev).strip(), "Projects")
 
-    return ("NOT_FOUND", "NOT_FOUND")
+    return ("NOT_FOUND", "NOT_FOUND", None)
 
 
-def _match_education(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str]:
+def _match_education(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str, Optional[str]]:
     edu_field = candidate_profile.get("education", {})
     if isinstance(edu_field, dict) and edu_field.get("status") == "FOUND":
         ev = edu_field.get("evidence", "")
         if ev and ev != "NOT_FOUND":
             edu_lower = str(ev).lower()
             if any(k in edu_lower for k in ["bachelor", "b.e.", "b.tech", "computer science"]):
-                return ("MATCHED", str(ev).strip())
-            return ("PARTIAL", str(ev).strip())
+                return ("MATCHED", str(ev).strip(), "Education")
+            return ("PARTIAL", str(ev).strip(), "Education")
 
-    return ("NOT_FOUND", "NOT_FOUND")
+    return ("NOT_FOUND", "NOT_FOUND", None)
 
 
-def _match_certification(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str]:
+def _match_certification(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str, Optional[str]]:
     cert_field = candidate_profile.get("certifications", {})
     if isinstance(cert_field, dict) and cert_field.get("status") == "FOUND":
         ev = cert_field.get("evidence", "")
@@ -280,18 +314,19 @@ def _match_certification(req_value: str, candidate_profile: Dict[str, Any]) -> T
             for cert_line in str(ev).split("\n"):
                 cert_lower = cert_line.lower()
                 if any(w in cert_lower for w in req_words):
-                    return ("MATCHED", cert_line.strip())
-            return ("PARTIAL", str(ev).strip())
+                    return ("MATCHED", cert_line.strip(), "Certifications")
+            return ("PARTIAL", str(ev).strip(), "Certifications")
 
-    return ("NOT_FOUND", "NOT_FOUND")
+    return ("NOT_FOUND", "NOT_FOUND", None)
 
 
-def _match_responsibility(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str]:
+def _match_responsibility(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str, Optional[str]]:
     req_words = set(re.findall(r"\b\w{4,}\b", req_value.lower()))
     snippets = _get_discrete_resume_snippets(candidate_profile)
 
     best_match_count = 0
     best_snippet = ""
+    best_sec: Optional[str] = None
 
     for snip_text, sec_name in snippets:
         line_words = set(re.findall(r"\b\w{4,}\b", snip_text.lower()))
@@ -299,23 +334,25 @@ def _match_responsibility(req_value: str, candidate_profile: Dict[str, Any]) -> 
         if len(overlap) > best_match_count:
             best_match_count = len(overlap)
             best_snippet = snip_text
+            best_sec = SECTION_DISPLAY_NAMES.get(sec_name, sec_name.capitalize())
 
     if best_match_count >= 2:
-        return ("MATCHED", best_snippet)
+        return ("MATCHED", best_snippet, best_sec)
     elif best_match_count == 1:
-        return ("PARTIAL", best_snippet)
+        return ("PARTIAL", best_snippet, best_sec)
 
-    return ("NOT_FOUND", "NOT_FOUND")
+    return ("NOT_FOUND", "NOT_FOUND", None)
 
 
-def _match_generic(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str]:
+def _match_generic(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[str, str, Optional[str]]:
     req_words = set(re.findall(r"\b\w{4,}\b", req_value.lower()))
     if not req_words:
-        return ("NOT_FOUND", "NOT_FOUND")
+        return ("NOT_FOUND", "NOT_FOUND", None)
 
     snippets = _get_discrete_resume_snippets(candidate_profile)
     best_match_count = 0
     best_snippet = ""
+    best_sec: Optional[str] = None
 
     for snip_text, sec_name in snippets:
         line_words = set(re.findall(r"\b\w{4,}\b", snip_text.lower()))
@@ -323,10 +360,11 @@ def _match_generic(req_value: str, candidate_profile: Dict[str, Any]) -> Tuple[s
         if len(overlap) > best_match_count:
             best_match_count = len(overlap)
             best_snippet = snip_text
+            best_sec = SECTION_DISPLAY_NAMES.get(sec_name, sec_name.capitalize())
 
     if best_match_count >= 2:
-        return ("MATCHED", best_snippet)
+        return ("MATCHED", best_snippet, best_sec)
     elif best_match_count == 1:
-        return ("PARTIAL", best_snippet)
+        return ("PARTIAL", best_snippet, best_sec)
 
-    return ("NOT_FOUND", "NOT_FOUND")
+    return ("NOT_FOUND", "NOT_FOUND", None)

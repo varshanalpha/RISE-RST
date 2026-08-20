@@ -147,6 +147,7 @@ class RequirementMatchDict(TypedDict):
     status: str  # "MATCHED", "PARTIAL", "NOT_FOUND"
     jd_evidence: str
     resume_evidence: str
+    source_section: Optional[str]
 
 
 @dataclass
@@ -160,6 +161,7 @@ class RequirementMatch:
     status: str  # "MATCHED", "PARTIAL", "NOT_FOUND"
     jd_evidence: str
     resume_evidence: str
+    source_section: Optional[str] = None
 
     def to_dict(self) -> RequirementMatchDict:
         return {
@@ -170,7 +172,9 @@ class RequirementMatch:
             "status": self.status,
             "jd_evidence": self.jd_evidence,
             "resume_evidence": self.resume_evidence,
+            "source_section": self.source_section,
         }
+
 
 
 @dataclass
@@ -274,6 +278,49 @@ class ScoreProfile:
                 r.to_dict() for r in self.requirement_scores
             ],
         }
+
+
+class ReportRequirementDict(TypedDict):
+    """Dictionary representation of a single requirement inside report groups."""
+
+    requirement_id: str
+    category: str
+    requirement: str
+    priority: str
+    status: str
+    weight: float
+    score: float
+    resume_evidence: Optional[str]
+    source_section: Optional[str]
+
+
+class ReportCategoryScoreDict(TypedDict):
+    """Dictionary representation of a category score inside final report."""
+
+    score: float
+    maximum_score: float
+    percentage: float
+
+
+class ReportSummaryDict(TypedDict):
+    """Summary counts of total, matched, partial, and not_found requirements."""
+
+    total_requirements: int
+    matched_count: int
+    partial_count: int
+    not_found_count: int
+
+
+class MatchReportDict(TypedDict):
+    """Unified structured report representation suitable for API and frontend integration."""
+
+    overall_score: float
+    earned_score: float
+    maximum_score: float
+    category_scores: Dict[str, ReportCategoryScoreDict]
+    requirements: Dict[str, List[ReportRequirementDict]]
+    summary: ReportSummaryDict
+
 
 
 

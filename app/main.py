@@ -7,6 +7,7 @@ from app.extractor import ExtractionError, extract_text
 from app.field_parser import parse_fields
 from app.jd_parser import JDParseError, parse_jd, read_jd_file
 from app.matcher import MatcherError, match_requirements
+from app.report_builder import ReportBuilderError, build_report
 from app.scorer import ScorerError, calculate_scores
 from app.segmenter import segment_text
 
@@ -107,6 +108,21 @@ def main() -> None:
                 print()
             print("===== SCORING COMPLETE =====")
 
+            # 5. Deterministic Result Report Generation
+            report = build_report(match_result, scores)
+
+            print("\n===== FINAL MATCH REPORT SUMMARY =====\n")
+            summary = report["summary"]
+            print(f"Total Requirements: {summary['total_requirements']}")
+            print(f"Matched Count:      {summary['matched_count']}")
+            print(f"Partial Count:      {summary['partial_count']}")
+            print(f"Not Found Count:    {summary['not_found_count']}")
+            print(f"\nOverall Match Percentage: {report['overall_score']:.2f}% ({report['earned_score']} / {report['maximum_score']})")
+
+            print("\n===== STRUCTURED REPORT JSON =====\n")
+            print(json.dumps(report, indent=2))
+            print("\n===== REPORT GENERATION COMPLETE =====")
+
     except ExtractionError as e:
         print(f"Extraction Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -119,6 +135,9 @@ def main() -> None:
     except ScorerError as e:
         print(f"Scorer Error: {e}", file=sys.stderr)
         sys.exit(1)
+    except ReportBuilderError as e:
+        print(f"Report Builder Error: {e}", file=sys.stderr)
+        sys.exit(1)
     except Exception as e:
         print(f"Unexpected Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -126,6 +145,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 
