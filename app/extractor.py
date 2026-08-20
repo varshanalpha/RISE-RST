@@ -1,6 +1,6 @@
-"""Text extraction module for processing PDF and DOCX resume files."""
-
+import re
 from pathlib import Path
+from typing import Optional
 import docx
 import pdfplumber
 
@@ -9,6 +9,45 @@ class ExtractionError(Exception):
     """Raised when resume text extraction fails."""
 
     pass
+
+
+def normalize_text(text: Optional[str]) -> str:
+    """Normalize raw text from resumes or extracted fields/evidence.
+
+    Converts escaped Unicode characters (\u2014 -> —, etc.), removes (cid:number) artifacts,
+    cleans tab characters (\t), handles line breaks, and normalizes repeated whitespace.
+    """
+    if not text:
+        return ""
+
+    s = str(text)
+
+    # 1. Remove (cid:number) artifacts
+    s = re.sub(r"\(cid:\d+\)", "", s)
+
+    # 2. Convert literal backslash escape sequences if present
+    s = s.replace("\\u2014", "—").replace("\\u2013", "–").replace("\\u2022", "•").replace("\\u00a0", " ")
+    s = s.replace("\\n", "\n").replace("\\t", " ")
+
+    # 3. Decode / normalize unicode characters
+    s = s.replace("\u2014", "—").replace("\u2013", "–").replace("\u2022", "•").replace("\u00a0", " ")
+    s = s.replace("\r\n", "\n").replace("\r", "\n").replace("\t", " ")
+
+    # 4. Normalize lines and whitespace
+    lines = [line.strip() for line in s.split("\n")]
+    normalized_lines = []
+    blank_count = 0
+    for line in lines:
+        if not line:
+            blank_count += 1
+            if blank_count <= 1:
+                normalized_lines.append("")
+        else:
+            blank_count = 0
+            clean_line = re.sub(r"[ \t]+", " ", line)
+            normalized_lines.append(clean_line)
+
+    return "\n".join(normalized_lines).strip()
 
 
 def extract_text(file_path: str) -> str:
@@ -37,7 +76,7 @@ def extract_text(file_path: str) -> str:
     else:
         raise ExtractionError("Unsupported file format. Supported formats: PDF, DOCX.")
 
-    normalized_text = _normalize_text(raw_text)
+    normalized_text = normalize_text(raw_text)
 
     if not normalized_text.strip():
         raise ExtractionError("No extractable text found in the document.")
@@ -68,17 +107,6 @@ def _extract_docx(path: Path) -> str:
 
 
 def _normalize_text(text: str) -> str:
-    text = text.replace("\r\n", "\n").replace("\r", "\n")
-    lines = [line.rstrip() for line in text.split("\n")]
-    normalized_lines = []
-    blank_count = 0
-    for line in lines:
-        if not line.strip():
-            blank_count += 1
-            if blank_count <= 1:
-                normalized_lines.append("")
-        else:
-            blank_count = 0
-            normalized_lines.append(line)
-    return "\n".join(normalized_lines).strip()
+    return normalize_text(text)
+
 

@@ -1,8 +1,9 @@
 # Resume Parser Agent
 
-> **Phase 9: Resume Evidence Cleanup and Source Section Detection**
+> **Phase 10: Human-Readable Report Generation & Output Exporter**
 
-A CLI-based system that processes resume files (PDF/DOCX) alongside job descriptions to extract structured candidate profiles with traceable text evidence and score job fit.
+A CLI-based system that processes resume files (PDF/DOCX) alongside job descriptions to extract structured candidate profiles with traceable text evidence, score job fit, and export human-readable Markdown and structured JSON reports.
+
 
 
 

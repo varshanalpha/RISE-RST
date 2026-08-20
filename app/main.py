@@ -5,6 +5,7 @@ import json
 import sys
 from app.extractor import ExtractionError, extract_text
 from app.field_parser import parse_fields
+from app.human_report import save_reports
 from app.jd_parser import JDParseError, parse_jd, read_jd_file
 from app.matcher import MatcherError, match_requirements
 from app.report_builder import ReportBuilderError, build_report
@@ -24,104 +25,71 @@ def main() -> None:
         required=False,
         help="Path to the job description file (.txt)",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Print verbose internal pipeline outputs to terminal",
+    )
 
     args = parser.parse_args()
 
     try:
         # 1. Resume Processing Pipeline
         extracted_text = extract_text(args.file)
-        print("===== EXTRACTED RESUME TEXT =====\n")
-        print(extracted_text)
-
         sections = segment_text(extracted_text)
-        print("\n===== SEGMENTED SECTIONS =====\n")
-        for sec in sections:
-            sec_id = sec["section_id"]
-            heading = sec["heading"] or "(None)"
-            text = sec["text"]
-            print(f"[SECTION: {sec_id}]")
-            print(f"Original Heading: {heading}")
-            print(text)
-            print()
-        print("===== SEGMENTATION COMPLETE =====")
-
         parsed_fields = parse_fields(sections)
-        print("\n===== PARSED CANDIDATE FIELDS =====\n")
-        print(json.dumps(parsed_fields, indent=2))
-        print("\n===== FIELD PARSING COMPLETE =====")
+
+        if args.debug:
+            print("===== EXTRACTED RESUME TEXT =====\n")
+            print(extracted_text)
+
+            print("\n===== SEGMENTED SECTIONS =====\n")
+            for sec in sections:
+                sec_id = sec["section_id"]
+                heading = sec["heading"] or "(None)"
+                print(f"[SECTION: {sec_id}] Heading: {heading}")
+                print(sec["text"])
+                print()
+
+            print("\n===== PARSED CANDIDATE FIELDS =====\n")
+            print(json.dumps(parsed_fields, indent=2, ensure_ascii=False))
 
         # 2. Job Description Processing & Matching Pipeline
         if args.jd:
             jd_text = read_jd_file(args.jd)
             jd_result = parse_jd(jd_text)
-            requirements = jd_result.get("requirements", [])
-
-            print("\n===== PARSED JOB REQUIREMENTS =====\n")
-            for req in requirements:
-                print(f"[{req['requirement_id']}]")
-                print(f"Category: {req['category']}")
-                print(f"Value: {req['value']}")
-                print(f"Priority: {req['priority']}")
-                print(f"Evidence: {req['evidence']}")
-                print()
-            print("===== JD PARSING COMPLETE =====")
 
             # 3. Requirement Matching & Precise Evidence Selection
             match_result = match_requirements(parsed_fields, jd_result)
-            matches = match_result.get("matches", [])
-
-            print("\n===== REQUIREMENT MATCH RESULTS =====\n")
-            for m in matches:
-                print(f"[{m['requirement_id']}]")
-                print(f"Category: {m['category']}")
-                print(f"Requirement: {m['requirement_value']}")
-                print(f"Priority: {m['priority']}")
-                print(f"Status: {m['status']}")
-                print(f"JD Evidence: {m['jd_evidence']}")
-                print(f"Resume Evidence: {m['resume_evidence']}")
-                print()
-            print("===== MATCHING COMPLETE =====")
 
             # 4. Deterministic Resume-to-Job Scoring Engine
             scores = calculate_scores(match_result)
-            cat_scores = scores.get("category_scores", {})
-            req_scores = scores.get("requirement_scores", [])
 
-            print("\n===== RESUME MATCH SCORE =====\n")
-            print(f"Overall Score: {scores['overall_score']:.2f}%")
-            print(f"Earned Score: {scores['earned_score']}")
-            print(f"Maximum Score: {scores['maximum_score']}")
-
-            print("\n===== CATEGORY SCORES =====\n")
-            for cat_name in ["EXPERIENCE", "RESPONSIBILITY", "SKILL", "EDUCATION"]:
-                cs = cat_scores.get(cat_name, {"percentage": 0.0})
-                print(f"{cat_name}: {cs['percentage']:.2f}%")
-
-            print("\n===== REQUIREMENT SCORES =====\n")
-            for rs in req_scores:
-                print(f"[{rs['requirement_id']}]")
-                print(f"Category: {rs['category']}")
-                print(f"Priority: {rs['priority']}")
-                print(f"Status: {rs['status']}")
-                print(f"Weight: {rs['weight']}")
-                print(f"Score: {rs['score']}")
-                print()
-            print("===== SCORING COMPLETE =====")
-
-            # 5. Deterministic Result Report Generation
+            # 5. Deterministic Result Report Generation & Saving Reports
             report = build_report(match_result, scores)
+            saved_paths = save_reports(report, output_dir="output", filename_prefix="resume_match_report")
 
-            print("\n===== FINAL MATCH REPORT SUMMARY =====\n")
+            if args.debug:
+                print("\n===== STRUCTURED REPORT JSON =====\n")
+                print(json.dumps(report, indent=2, ensure_ascii=False))
+
+            # Concise Terminal Output Summary
             summary = report["summary"]
-            print(f"Total Requirements: {summary['total_requirements']}")
-            print(f"Matched Count:      {summary['matched_count']}")
-            print(f"Partial Count:      {summary['partial_count']}")
-            print(f"Not Found Count:    {summary['not_found_count']}")
-            print(f"\nOverall Match Percentage: {report['overall_score']:.2f}% ({report['earned_score']} / {report['maximum_score']})")
+            print("\n===== RESUME PARSER AGENT ANALYSIS =====\n")
+            print(f"Overall Compatibility Score: {report['overall_score']:.2f}% ({report['earned_score']} / {report['maximum_score']} points)")
+            print("\nRequirement Counts:")
+            print(f"  - Matched Count:   {summary['matched_count']}")
+            print(f"  - Partial Count:   {summary['partial_count']}")
+            print(f"  - Not Found Count: {summary['not_found_count']}")
 
-            print("\n===== STRUCTURED REPORT JSON =====\n")
-            print(json.dumps(report, indent=2))
-            print("\n===== REPORT GENERATION COMPLETE =====")
+            print("\nCategory Performance:")
+            for cat_name, cat_data in report["category_scores"].items():
+                print(f"  - {cat_name.capitalize():<14}: {cat_data['percentage']:.2f}% ({cat_data['score']} / {cat_data['maximum_score']} pts)")
+
+            print("\nReports Generated Successfully:")
+            print(f"  - Human-Readable Report: {saved_paths['markdown']}")
+            print(f"  - Structured JSON Data:  {saved_paths['json']}")
+            print("\n===== ANALYSIS COMPLETE =====")
 
     except ExtractionError as e:
         print(f"Extraction Error: {e}", file=sys.stderr)
@@ -145,10 +113,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-

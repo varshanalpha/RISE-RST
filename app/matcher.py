@@ -1,7 +1,6 @@
-"""Deterministic Resume-to-Job Requirement Matching Module with Precise Evidence Selection & Cleanup."""
-
 import re
 from typing import Any, Dict, List, Optional, Set, Tuple
+from app.extractor import normalize_text
 from app.models import MatchProfile, RequirementMatch, RequirementMatchDict
 
 
@@ -44,18 +43,12 @@ def clean_evidence(text: Optional[str]) -> str:
     if not text or text == "NOT_FOUND":
         return "NOT_FOUND"
 
-    # Remove (cid:number) artifacts
-    cleaned = re.sub(r"\(cid:\d+\)", "", str(text))
-
-    # Normalize common unicode characters and dashes
-    cleaned = cleaned.replace("\u2014", "—").replace("\u2013", "–")
-
-    # Clean multiline lines and whitespace
-    lines = [re.sub(r"\s+", " ", line).strip() for line in cleaned.split("\n")]
-    lines = [re.sub(r"^[•\-\*\s]+", "", l).strip() for l in lines if l]
+    cleaned = normalize_text(text)
+    lines = [re.sub(r"^[•\-\*\s]+", "", l).strip() for l in cleaned.split("\n") if l.strip()]
 
     final_str = "\n".join(lines).strip()
     return final_str if final_str else "NOT_FOUND"
+
 
 
 def match_requirements(
